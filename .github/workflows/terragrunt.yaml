@@ -45,6 +45,7 @@ jobs:
         run: |
           pip install checkov
       - name: Checkov Scan
+        if: success() || failure()
         run: |
           checkov -d .
 
