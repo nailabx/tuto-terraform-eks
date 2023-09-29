@@ -27,6 +27,7 @@ permissions:
 jobs:
   TerragruntCheckov:
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v3
