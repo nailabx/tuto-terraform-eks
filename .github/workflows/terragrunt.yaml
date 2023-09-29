@@ -27,7 +27,6 @@ permissions:
 jobs:
   TerragruntCheckov:
     runs-on: ubuntu-latest
-    if: always()
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v3
@@ -45,7 +44,7 @@ jobs:
         run: |
           pip install checkov
       - name: Checkov Scan
-        if: success() || failure()
+        if: true
         run: |
           checkov -d .
 
