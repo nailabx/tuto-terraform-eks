@@ -65,12 +65,13 @@ jobs:
         run: |
           wget -q https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 -O /usr/local/bin/terragrunt
           chmod +x /usr/local/bin/terragrunt
+      - uses: hashicorp/setup-terraform@v2
       - name: Initialize Terragrunt
         run: |
-          terragrunt init
+          terraform init
       - name: Plan Terragrunt
         run: |
-          terragrunt plan
+          terraform plan
 
   TerragruntDestroy:
     runs-on: ubuntu-latest
@@ -88,6 +89,7 @@ jobs:
         run: |
           wget -q https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 -O /usr/local/bin/terragrunt
           chmod +x /usr/local/bin/terragrunt
+      - uses: hashicorp/setup-terraform@v2
       - name: Destroy
         run: |
-          terragrunt plan --destroy
+          terraform plan --destroy
