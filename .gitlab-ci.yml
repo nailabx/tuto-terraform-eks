@@ -1,0 +1,5 @@
+include:
+  - template: Terraform.gitlab-ci.yml
+
+variables:
+  TF_STATE_NAME: default
