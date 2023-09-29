@@ -19,7 +19,6 @@ env:
   AWS_IAM_ROLE: "${{ vars.AWS_IAM_ROLE }}"
   AWS_ACCOUNT_ID: "${{ vars.AWS_ACCOUNT_ID }}"
   GITHUB_TOKEN:  "${{ secrets.GITHUB_TOKEN }}"
-#  TERRAGRUNT_IAM_ROLE: "${{ vars.AWS_IAM_ROLE }}"
 
 # Permission can be added at job level or workflow level
 permissions:
@@ -46,7 +45,6 @@ jobs:
           pip install checkov
       - name: Checkov Scan
         run: |
-#          cd infrastructure/resources/dev/nailabx-k8s
           checkov -d .
 
   TerragruntPlanApply:
@@ -68,17 +66,14 @@ jobs:
           chmod +x /usr/local/bin/terragrunt
       - name: Initialize Terragrunt
         run: |
-#          cd infrastructure/resources/dev/nailabx-k8s
           terragrunt init
       - name: Plan Terragrunt
         run: |
-#          cd infrastructure/resources/dev/nailabx-k8s
           terragrunt plan
 
   TerragruntDestroy:
     runs-on: ubuntu-latest
     needs: TerragruntPlanApply
-#    if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'workflow_run.completed' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'Terraform Workflow'
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v3
@@ -94,5 +89,4 @@ jobs:
           chmod +x /usr/local/bin/terragrunt
       - name: Destroy
         run: |
-#          cd infrastructure/resources/dev/nailabx-k8s
           terragrunt plan --destroy
