@@ -92,4 +92,5 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - name: Destroy
         run: |
+          terraform init
           terraform plan --destroy
