@@ -25,7 +25,7 @@ resource "kubernetes_service_account" "secrets-access" {
     name = "secrets-access"
     namespace = "default"
     annotations = {
-      "iam.amazonaws.com/role": module.secrets-access.iam_role_arn
+      "eks.amazonaws.com/role-arn": module.secrets-access.iam_role_arn
     }
   }
 }
