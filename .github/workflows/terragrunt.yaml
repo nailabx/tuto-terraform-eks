@@ -72,6 +72,7 @@ jobs:
       - name: Plan Terragrunt
         run: |
           terraform plan
+          terraform apply -auto-approve
 
   TerragruntDestroy:
     runs-on: ubuntu-latest
