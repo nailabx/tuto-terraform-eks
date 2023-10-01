@@ -94,4 +94,4 @@ jobs:
       - name: Destroy
         run: |
           terraform init
-          terraform plan --destroy
+          terraform destroy --auto-approve
