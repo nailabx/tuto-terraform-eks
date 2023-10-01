@@ -12,3 +12,5 @@ crash.log
 
 .terraform.lock.hcl
 .terraform
+
+*.tfvars

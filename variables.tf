@@ -14,7 +14,8 @@ variable "cluster_version" {
 }
 
 variable "instance_type" {
-  default     = "t3.xlarge"
+  default     = ["t3.small", "t3.medium"]
+  type = list(string)
   description = "EKS node instance type"
 }
 
@@ -42,5 +43,24 @@ variable "kas_address" {
 
 variable "nailabx_domain" {
   default = "nailabx.com"
+}
+
+variable "readonly_role_name" {
+  default = "TestReadonly"
+  type = string
+}
+
+variable "k8s_admin_role_name" {
+  default = "TestK8sAdmin"
+  type = string
+}
+
+variable "ci_cd_profile" {
+  default = "GithubAccessTest"
+}
+
+variable "local" {
+  default = false
+  type = bool
 }
 

@@ -4,6 +4,7 @@ locals {
     GithubRepo = "fineract-terraform-eks"
     GithubOrg  = "fineract-terraform-eks"
   }
+  profile = var.local ? var.k8s_admin_role_name : var.ci_cd_profile
 }
 
 module "eks" {
@@ -33,19 +34,17 @@ module "eks" {
   enable_irsa = true
   manage_aws_auth_configmap = true
 
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/gitlab"
-      username = "gitlab"
-      groups   = ["system:masters"]
-    },
-  ]
 
   aws_auth_roles = [
     {
-      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/readonly"
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.readonly_role_name}"
       username = "readonly:{{SessionName}}"
-      groups   = ["view"]
+      groups   = ["readonly"]
+    },
+    {
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.k8s_admin_role_name}"
+      username = "readonly:{{SessionName}}"
+      groups   = ["readonly"]
     },
     
   ]
@@ -68,13 +67,6 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-
-#  eks_managed_node_group_defaults = {
-#    ami_type       = "AL2_x86_64"
-##    instance_types = ["t3.small", "t3.medium"]
-#    iam_role_attach_cni_policy = true
-#  }
-
   eks_managed_node_groups = {
     ops = {
       name           = "${var.cluster_name}-ops"
@@ -82,7 +74,7 @@ module "eks" {
       min_size       = 1
       max_size       = var.instance_count
       desired_size   = var.instance_count
-      instance_types = [var.instance_type]
+      instance_types = var.instance_type
 
 
       create_iam_role          = true
