@@ -43,8 +43,13 @@ module "eks" {
     },
     {
       rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.k8s_admin_role_name}"
-      username = "readonly:{{SessionName}}"
-      groups   = ["readonly"]
+      username = "k8s-admin:{{SessionName}}"
+      groups   = ["k8s-admin"]
+    },
+    {
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.ci_cd_profile}"
+      username = "k8s-admin:{{SessionName}}"
+      groups   = ["k8s-admin"]
     },
     
   ]
