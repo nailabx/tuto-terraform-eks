@@ -1,7 +1,7 @@
 module "secrets-access" {
   source      = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
-  role_name                                          = "external-secrets"
+  role_name                                          = "secrets-access"
   attach_external_secrets_policy                     = true
 #  external_secrets_ssm_parameter_arns                = ["arn:aws:ssm:*:*:parameter/foo"]
 #  external_secrets_secrets_manager_arns              = ["arn:aws:secretsmanager:*:*:secret:bar"]
@@ -17,5 +17,15 @@ module "secrets-access" {
   }
   tags = {
     Name = "secrets-access"
+  }
+}
+
+resource "kubernetes_service_account" "secrets-access" {
+  metadata {
+    name = "secrets-access"
+    namespace = "default"
+    annotations = {
+      "iam.amazonaws.com/role": module.secrets-access.iam_role_arn
+    }
   }
 }
