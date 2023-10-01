@@ -17,7 +17,7 @@ resource "kubernetes_cluster_role_binding" "readonly" {
 }
 
 # admin binding
-resource "kubernetes_cluster_role_binding" "readonly" {
+resource "kubernetes_cluster_role_binding" "admin" {
   metadata {
     name = "k8s-admin"
   }
