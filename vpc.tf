@@ -52,4 +52,5 @@ module "vpc" {
   }
 
   tags = local.tags
+
 }
