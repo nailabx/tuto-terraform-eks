@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an EKS cluster using an IAM role with OIDC to authenticate to AWS, and with a condition that allows only clusters with names starting with a specific string.
+
+Parameters:
+  GitHubOrg:
+    Description: Name of GitHub organization/user (case sensitive)
+    Type: String
+    Default: nailabx
+  RepositoryName:
+    Description: Name of GitHub repository (case sensitive)
+    Type: String
+    Default: *
+  ThumbprintList:
+    Description: Thumbprint of the GitHub OIDC provider
+    Type: List<String>
+    Default:
+    - 6938fd4d98bab03faadb97b34396831e3780aea1
+  TagNamePrefix:
+    Description: Prefix that must be used for all EKS cluster names
+    Type: String
+    Default: test
+  OIDCAudience:
+    Description: Audience supplied to configure-aws-credentials.
+    Default: "sts.amazonaws.com"
+    Type: String
+
+Resources:
+  # Create an OIDC provider for GitHub
+  GitHubOIDCProvider:
+    Type: AWS::IAM::OpenIDConnectProvider
+    Properties:
+      ClientID: token.actions.githubusercontent.com
+      ThumbprintList: !Ref ThumbprintList
+      Url: https://token.actions.githubusercontent.com
+
+  # Create an IAM role for GitHub Actions to assume
+  GitHubActionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: GitHubActionsRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Federated:
+              Fn::GetAtt: GitHubOIDCProvider.Arn
+          Action: sts:AssumeRoleWithWebIdentity
+          Condition:
+            StringEquals:
+              token.actions.githubusercontent.com:aud: !Ref OIDCAudience
+            StringLike:
+              token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
+
+  # Attach a policy to the IAM role that gives it permission to create EKS clusters
+  GitHubActionsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: GitHubActionsPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action: "*"
+          Resource: "*"
+          Condition:
+            StringLike:
+              "tag:Env": !sub ${TagNamePrefix}*
+
+  # Attach the policy to the IAM role
+  GitHubActionsRolePolicyAttachment:
+    Type: AWS::IAM::RolePolicyAttachment
+    Properties:
+      RoleName: !Ref GitHubActionsRole
+      PolicyArn: !Ref GitHubActionsPolicy
+
+Outputs:
+  GitHubActionsRoleArn:
+    Description: ARN of the IAM role
+    Value: !Ref GitHubActionsRole
+
+
+
