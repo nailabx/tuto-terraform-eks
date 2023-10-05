@@ -15,9 +15,9 @@ module "secrets-access" {
       namespace_service_accounts = ["default:secrets-access"]
     }
   }
-  tags = {
+  tags = merge({
     Name = "secrets-access"
-  }
+  }, local.tags)
 }
 
 resource "kubernetes_service_account" "secrets-access" {

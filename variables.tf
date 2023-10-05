@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "cluster_name" {
-  default     = "gitlab-terraform-eks"
+  default     = "irsa-terraform-eks"
   description = "EKS Cluster name"
 }
 

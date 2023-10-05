@@ -1,10 +1,7 @@
 locals {
   name = var.cluster_name
-  tags = {
-    GithubRepo = "fineract-terraform-eks"
-    GithubOrg  = "fineract-terraform-eks"
-  }
   profile = var.local ? var.k8s_admin_role_name : var.ci_cd_profile
+  tags = {"Env": "tutorial-test"}
 }
 
 module "eks" {
@@ -96,7 +93,7 @@ module "eks" {
 
     }
   }
-
+  tags = local.tags
 }
 
 
@@ -115,6 +112,7 @@ resource "aws_iam_policy" "additional" {
       },
     ]
   })
+  tags = local.tags
 }
 
 module "kms" {
@@ -129,19 +127,6 @@ module "kms" {
   tags = local.tags
 }
 
-module "lb_role" {
-  source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-
-  role_name = "${var.cluster_name}_eks_lb"
-  attach_load_balancer_controller_policy = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
-    }
-  }
-}
 
 
 
