@@ -84,7 +84,13 @@ Resources:
           Resource: "*"
           Condition:
             StringLike:
-              "aws:ResourceTag/Env": !Sub "*${TagNamePrefix}*"
+              "aws:ResourceTag/Env": !Sub "${TagNamePrefix}"
+        - Effect: Allow
+          Action: "*"
+          Resource: "*"
+          Condition:
+            StringLike:
+              "aws:RequestTag/Env": !Sub "${TagNamePrefix}"
       Roles:
         - !Ref GitHubActionsRole
 

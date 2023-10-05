@@ -1,7 +1,7 @@
 locals {
   name = var.cluster_name
   profile = var.local ? var.k8s_admin_role_name : var.ci_cd_profile
-  tags = {"Env": "tutorial-test"}
+  tags = {"Env": "test"}
 }
 
 module "eks" {
