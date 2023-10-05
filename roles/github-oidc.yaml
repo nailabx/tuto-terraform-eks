@@ -25,7 +25,7 @@ Parameters:
   RoleName:
     Type: String
     Description: Name the Role
-    Default: "githubActionTest"
+    Default: "GithubAccessTest"
 
 Conditions:
   CreateProvider: !Equals
