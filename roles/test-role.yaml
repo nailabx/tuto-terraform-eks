@@ -28,8 +28,6 @@ Resources:
                   - eks:DescribeCluster
                   - sts:GetCallerIdentity
                 Resource: "*"
-          Roles:
-            - !Ref TestRole
 
 Outputs:
   TestRoleArn:
