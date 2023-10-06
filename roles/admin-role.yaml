@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Creates an IAM role that can be assumed by the root and test users only and grants them permission to update their kubeconfig file for EKS clusters with the tag Env and value not containing production.
 
 Resources:
-  TestRole:
+  AdminTestRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: TestRole
+      RoleName: AdminTestRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -19,17 +19,15 @@ Resources:
 #              StringLike:
 #                aws:ResourceTag/Env: "test"
       Policies:
-        - PolicyName: eksUpdateKubeconfigPolicy
+        - PolicyName: AdminTestRole
           PolicyDocument:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
-                Action:
-                  - eks:DescribeCluster
-                  - sts:GetCallerIdentity
+                Action: "*"
                 Resource: "*"
 
 Outputs:
   TestRoleArn:
-    Value: !Ref TestRole
+    Value: !Ref AdminTestRole
     Description: The ARN of the test role.

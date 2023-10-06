@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+name: EKS cluster deletion
+
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  AWS_REGION : "us-east-1" #Change to reflect your Region
+  AWS_IAM_ROLE: "${{ vars.AWS_IAM_ROLE }}"
+  AWS_ACCOUNT_ID: "${{ vars.AWS_ACCOUNT_ID }}"
+  GITHUB_TOKEN:  "${{ secrets.GITHUB_TOKEN }}"
+
+# Permission can be added at job level or workflow level
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+jobs:
+  TerraformDestroy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_IAM_ROLE }} #change to reflect your IAM role’s ARN
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Install Terraform
+        run: |
+          wget -q https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 -O /usr/local/bin/terragrunt
+          chmod +x /usr/local/bin/terragrunt
+      - uses: hashicorp/setup-terraform@v2
+      - name: Destroy
+        run: |
+          terraform init
+          terraform destroy --auto-approve
