@@ -46,12 +46,12 @@ variable "nailabx_domain" {
 }
 
 variable "readonly_role_name" {
-  default = "TestReadonly"
+  default = "TestRole"
   type = string
 }
 
 variable "k8s_admin_role_name" {
-  default = "TestK8sAdmin"
+  default = "AdminTestRole"
   type = string
 }
 
