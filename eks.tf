@@ -36,7 +36,7 @@ module "eks" {
     {
       rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.readonly_role_name}"
       username = "readonly:{{SessionName}}"
-      groups   = ["readonly"]
+      groups   = ["default-access"]
     },
     {
       rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.k8s_admin_role_name}"
