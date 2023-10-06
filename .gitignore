@@ -16,4 +16,6 @@ crash.log
 *.tfvars
 
 .kube
-sample
+
+*.ini
+**/profile.ini

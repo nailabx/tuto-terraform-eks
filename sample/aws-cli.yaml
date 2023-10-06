@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: aws-cli
+  name: aws-cli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aws-cli
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: aws-cli
+    spec:
+      serviceAccountName: secrets-access
+      containers:
+      - image: amazon/aws-cli
+        name: aws-cli
+        command: ["sleep", "infinity"]
+        resources: {}
+      restartPolicy: Always
