@@ -23,16 +23,20 @@ def parse_config(config_file, access):
     if 'role_name' not in config[access]:
         print(f"Error: 'role_name' not found in the config file.")
         return None, None, None, None
+    if 'source_profile' not in config[access]:
+        print(f"Error: 'source_profile' not found in the config file.")
+        return None, None, None, None
 
     profile_name = config[access]["profile_name"]
     role_name = config[access]["role_name"]
     account_id = config[access]["aws_account_id"]
     region = config[access]["region"]
+    source_profile = config[access]["source_profile"]
 
-    return profile_name, role_name, account_id, region
+    return profile_name, role_name, account_id, region, source_profile
 
 
-def update_aws_config(config_file, profile_name, role_name, account_id, region):
+def update_aws_config(config_file, profile_name, role_name, account_id, region, source_profile):
     config = configparser.ConfigParser()
     config.read(config_file)
 
@@ -42,6 +46,7 @@ def update_aws_config(config_file, profile_name, role_name, account_id, region):
         config['profile ' + profile_name] = {}
     config['profile ' + profile_name]['region'] = region
     config['profile ' + profile_name]['role_arn'] = arn
+    config['profile ' + profile_name]['source_profile'] = source_profile
 
     with open(config_file, 'w') as configfile:
         config.write(configfile)
@@ -58,10 +63,10 @@ def main():
     config_file = args.config_file
     access = args.access
 
-    profile_name, role_name, account_id, region = parse_config(config_file, access)
+    profile_name, role_name, account_id, region, source_profile = parse_config(config_file, access)
 
     if profile_name and role_name and account_id and region:
-        update_aws_config(aws_config_path, profile_name, role_name, account_id, region)
+        update_aws_config(aws_config_path, profile_name, role_name, account_id, region, source_profile)
         print(f"Profile '{profile_name}' updated in '{aws_config_path}' with role ARN.")
     else:
         print("Error: Unable to extract necessary information from the config file.")
