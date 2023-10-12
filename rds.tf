@@ -59,9 +59,6 @@ resource "aws_secretsmanager_secret_version" "password" {
   secret_id     = aws_secretsmanager_secret.rds_password_secret.id
   secret_string = "{\"password\":\"${random_password.rds_password.result}\"}"
 }
-resource "aws_db_instance_s" "" {
-  instance_class = ""
-}
 
 resource "null_resource" "init_db" {
   triggers = {
