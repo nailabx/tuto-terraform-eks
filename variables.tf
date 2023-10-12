@@ -77,3 +77,8 @@ variable "secretRDSPath" {
   type = string
 }
 
+variable "db_username" {
+  default = "user"
+  type = string
+}
+

@@ -57,18 +57,9 @@ resource "aws_secretsmanager_secret" "rds_password_secret" {
 
 resource "aws_secretsmanager_secret_version" "password" {
   secret_id     = aws_secretsmanager_secret.rds_password_secret.id
-  secret_string = "{\"password\":\"${random_password.rds_password.result}\"}"
+  secret_string = "{\"password\":\"${random_password.rds_password.result}\", \"username\":\"${var.db_username}\"}"
 }
 
-resource "null_resource" "init_db" {
-  triggers = {
-    instance_id = aws_db_instance.default.id
-  }
-  provisioner "local-exec" {
-    command = "mysql -h ${aws_db_instance.default.endpoint} -u ${aws_db_instance.default.username} -p'${aws_db_instance.default.password}' < employee.sql"
-  }
-  depends_on = [aws_db_instance.default]
-}
 
 
 
