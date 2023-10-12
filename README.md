@@ -1,5 +1,30 @@
-# Infrastructure as Code with GitLab and Terraform (AWS EKS)
+# Tuto IRSA misconfiguration
+This repo contains the necessary source code to set up your environment to follow the tutorial.
+This contains the script, the cloud formation template, and the example of illegally accessing AWS services. The dangers of EKS irsa misconfigurations in aws.
+## local dependency
+brew install mysql
+## Create User without any permissions(can access to aws console)
 
-This repository contains sample code for creating an AWS Elastic Kubernetes Service (EKS) cluster using [GitLab Infrastructure as Code](https://docs.gitlab.com/ee/user/infrastructure/), and connecting it to GitLab with the [GitLab agent for Kubernetes](https://docs.gitlab.com/ee/user/clusters/agent/).
+## Create the GitHub OIDC(for GitHub actions users)
 
-For more information on how to use it, please refer to the [official docs](https://docs.gitlab.com/ee/user/infrastructure/clusters/connect/new_eks_cluster.html).
+## Create IAM admin role(for local users)
+
+## Create IAM readonly role
+
+## Execute script set up the readonly user to assume the two roles
+
+## Update your terraform code accordingly
+
+## Push to deploy it(GitHub actions users)
+
+## Terraform apply for local users
+
+## create a readonly kubeconfig file
+
+## Access denied to secret through aws console
+
+## Access denied to secret through aws cli
+
+## Get database secret through aws pod
+
+## Change database data.

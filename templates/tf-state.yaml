@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template to create an S3 bucket and DynamoDB table for Terraform state
+
+Resources:
+  TerraformStateBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: nailabx-tuto-state
+      VersioningConfiguration:
+        Status: Enabled
+
+  TerraformLockTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: nailabx-tuto-state
+      AttributeDefinitions:
+        - AttributeName: LockID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: LockID
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  TerraformStateBucketName:
+    Description: S3 bucket name for Terraform state
+    Value: !Ref TerraformStateBucket
+
+  TerraformLockTableName:
+    Description: DynamoDB table name for Terraform state locking
+    Value: !Ref TerraformLockTable
