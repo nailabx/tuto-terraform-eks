@@ -5,8 +5,8 @@ name: EKS cluster creation
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
 #  workflow_dispatch:
 #    inputs:
 #      destroy_terraform:
@@ -55,6 +55,11 @@ jobs:
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v3
+      - name: Install MySQL client
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y mysql-client
+        shell: bash
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

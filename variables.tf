@@ -64,3 +64,16 @@ variable "local" {
   type = bool
 }
 
+#################
+# Database variables
+#################
+variable "dbname" {
+  type = string
+  default = "demodb"
+}
+
+variable "secretRDSPath" {
+  default = "tutorial/rda/credentials"
+  type = string
+}
+
