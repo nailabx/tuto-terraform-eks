@@ -36,18 +36,77 @@ aws configure
 ```
 copy and paste the access key type enter. Keep all the remaining as default.
 copy and paste the secret key type enter.
+## Setup the IAM role for the readonly user
+To setup the two IAM role for the readonly user, you need to have python already installed in your environment.
+In the script folder you will find the [update-config.py](script/update-config.py) python file.
+If the script is not executable please do
+```shell
+cd script
+chmod +x update-config.py
+```
+Please revisit the [profile.ini](script/profile.ini) file to make sure that all the role information values are good.
+If all check please run the script.
+```shell
+./update-config.py
+```
+This will auto create all the necessary role for you.
 ## Update your terraform code accordingly
 Make the necessary changes in the [variables file](variables.tf) accordingly. Base on the name you choose for the role 
+## Add env variable to gitHub(only if you want to use CI/CD)
+Once you fork the code in your space, within the repo click on the setting.
+In setting, click on Secrets and variables and then actions.
+![github secret](images/github-setting.png)
+Once that page is shown then click on variable and add the account id and the GitHub oidc iam role as variables.
+![github variable](images/github-variable.png)
 ## Push to deploy it(GitHub actions users)
-
+Once everything look good then just push to the **main** branch, and then you can observe the pipeline.
+The pipeline will create the eks cluster automatically.
 ## Terraform apply for local users
-
+If you want to use terraform locally instead of the GitHub action, then you can use the AdminTestRole for that.
+Export aws profile to be AdminTestRole. Make sure you are in your terraform code repo.
+```shell
+export AWS_PROFILE=adminTest
+```
+And then run terraform apply command.
+```shell
+terraform destroy -var-file=input.tfvars -auto-approve 
+```
 ## create a readonly kubeconfig file
-
+Create a folder call .kube to store your kubeconfig for full Admin access and normal access.
+Inside that folder create two file.
+```shell
+cd .kube
+touch admin
+touch normal
+```
+Setup eks kubeconfig for each one of them.
+```shell
+export KUBECONFIG=`pwd`/admin
+aws eks update-kubeconfig --region us-east-1 --name irsa-terraform-eks --alias irsa-terraform-eks --profile adminTest
+```
+Same for the normal access
+```shell
+export KUBECONFIG=`pwd`/normal
+aws eks update-kubeconfig --region us-east-1 --name irsa-terraform-eks --alias irsa-terraform-eks --profile noAccessTest
+```
 ## Access denied to secret through aws console
-
+Once we visit the aws console as our test user you will see access denied everywhere.
+![access denied](images/access-denied.png)
 ## Access denied to secret through aws cli
-
+Same if we use the **noAccessTest**.
+```shell
+export AWS_PROFILE=noAccessTest
+aws secretsmanager list-secrets
+```
+![secret denied](images/secret-denied.png)
 ## Get database secret through aws pod
+Because of bad eks IRSA configuration let's run a pod and attach the service account and steal the database credentials.
+For that use the [aws-cli file](sample/aws-cli.yaml) to create a pod.
+```shell
+kubectl create -f sample/aws-cli.yaml
+```
+Then we can exec into the pod and alter the database credentials and much more.
+```shell
+kubectl exec -it <podname> -- /bin/sh
+```
 
-## Change database data.
