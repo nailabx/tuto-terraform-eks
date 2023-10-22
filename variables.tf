@@ -73,7 +73,7 @@ variable "dbname" {
 }
 
 variable "secretRDSPath" {
-  default = "tutorial/rds/credentials"
+  default = "tutorials/rds/credentials"
   type = string
 }
 
