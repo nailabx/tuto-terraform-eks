@@ -13,7 +13,7 @@ Resources:
             Principal:
               AWS:
                 - !Sub "arn:aws:iam::${AWS::AccountId}:root"
-                - !Sub "arn:aws:iam::${AWS::AccountId}:user/test"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:user/test-ro"
             Action: sts:AssumeRole
 #            Condition:
 #              StringLike:
