@@ -32,7 +32,7 @@ Use the [test-role.yaml](templates/test-role.yaml) to create describe eks IAM ro
 Create an access key and secret key for the test only. Copy the access key and secret key to configure aws cli.
 Run the following command
 ```shell
-aws configure
+aws configure --profile test-ro
 ```
 copy and paste the access key type enter. Keep all the remaining as default.
 copy and paste the secret key type enter.
