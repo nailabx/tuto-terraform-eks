@@ -19,6 +19,12 @@ brew install awscli
 ## Create User with any permissions(can access only to aws console)
 [Click here to access to aws console](https://us-east-1.console.aws.amazon.com/iamv2/home?region=us-east-1#/users)
 ![create aws user](images/aws-user.png)
+## Execute script set up the readonly user to assume the two roles
+Create an access key and secret key for the test only. Copy the access key and secret key to configure aws cli.
+Run the following command
+```shell
+aws configure --profile test-ro
+```
 ## Create the GitHub OIDC(for GitHub actions users)
 Use the [github-oidc.yaml](templates/github-oidc.yaml) to create GitHub Actions IAM role. This cloudformation template give a full admin access(Not recommended).
 [cloudformation aws console](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1)
@@ -28,12 +34,6 @@ Use the [admin-role.yaml](templates/admin-role.yaml) to create Admin IAM role th
 ## Create IAM readonly role
 Use the [test-role.yaml](templates/test-role.yaml) to create describe eks IAM role that test user will use. This cloudformation template give only access to kubeconfig eks.
 [cloudformation aws console](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1)
-## Execute script set up the readonly user to assume the two roles
-Create an access key and secret key for the test only. Copy the access key and secret key to configure aws cli.
-Run the following command
-```shell
-aws configure --profile test-ro
-```
 copy and paste the access key type enter. Keep all the remaining as default.
 copy and paste the secret key type enter.
 ## Setup the IAM role for the readonly user
