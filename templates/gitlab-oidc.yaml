@@ -1,0 +1,125 @@
+#AWSTemplateFormatVersion: '2015-04-27'
+Description: Creates an EKS cluster using an IAM role with OIDC to authenticate to AWS, and with a condition that allows only clusters with names starting with a specific string.
+
+Parameters:
+  GitlabOrg:
+    Description: Name of Gitlab organization/user (case sensitive)
+    Type: String
+    Default: "monbili"
+  RepositoryName:
+    Description: Name of GitHub repository (case sensitive)
+    Type: String
+    Default: "*"
+  OIDCAudience:
+    Description: Audience supplied to configure-aws-credentials.
+    Default: "sts.amazonaws.com"
+    Type: String
+  OIDCProviderArn:
+    Description: Arn for the GitHub OIDC Provider.
+    Default: ""
+    Type: String
+  RoleName:
+    Type: String
+    Description: Name the Role
+    Default: "GitlabAccessRole"
+
+Conditions:
+  CreateProvider: !Equals
+    - !Ref OIDCProviderArn
+    - ""
+
+Resources:
+  GitlabOIDCProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateProvider
+    Properties:
+      Url: https://gitlab.com
+      ClientIdList:
+        - sts.amazonaws.com
+        - !Sub https://gitlab.com/${GitlabOrg}/${RepositoryName}
+      ThumbprintList:
+        - b3dd7606d2b5a8b4a13771dbecc9ee1cecafa38a
+      Tags:
+        - Key: Name
+          Value: !Sub ${RoleName}-OIDC-Provider
+
+  # Create an IAM role for GitHub Actions to assume
+  GitlabAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      RoleName: !Ref RoleName
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Federated: !If
+              - CreateProvider
+              - !Ref GitlabOIDCProvider
+              - !Ref OIDCProviderArn
+          Action: sts:AssumeRoleWithWebIdentity
+          Condition:
+            StringEquals:
+              "www.gitlab.com:aud": !Ref OIDCAudience
+            StringLike:
+              "www.gitlab.com:sub": !Sub "project_path:${GitlabOrg}/*:ref_type:branch:ref:main"
+
+  # Attach a policy to the IAM role that gives it permission to create EKS clusters
+  GitlabAccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: GitlabAccessPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action: "*"
+          Resource: "*"
+      Roles:
+        - !Ref GitlabAccessRole
+
+
+Outputs:
+  GitlabActionsRoleArn:
+    Description: ARN of the IAM role
+    Value: !Ref GitlabAccessRole
+
+
+
+
+
+
+
+
+
+#AWSTemplateFormatVersion: 2010-09-09
+#Description: Creates an IAM role that allows GitLab to create infrastructure with AWS.
+#Resources:
+#  GitLabRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      RoleName: GitLabRole
+#      AssumeRolePolicyDocument:
+#        Version: 2012-10-17
+#        Statement:
+#          - Effect: Allow
+#            Principal:
+#              Federated: "arn:aws:iam::${AWS::AccountId}:oidc-provider/gitlab.com"
+#            Action: sts:AssumeRoleWithWebIdentity
+#            Condition:
+#              StringEquals:
+#                "www.gitlab.com:sub": project_path:monbili/*:ref_type:branch:ref:main
+#
+#  GitLabRolePolicy:
+#    Type: AWS::IAM::Policy
+#    Properties:
+#      PolicyName: GitLabRolePolicy
+#      PolicyDocument:
+#        Version: 2012-10-17
+#        Statement:
+#          - Effect: Allow
+#            Action: '*'
+#            Resource: '*'
+#      Roles:
+#        - !Ref GitLabRole

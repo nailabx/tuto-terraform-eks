@@ -16,14 +16,14 @@ brew install terraform
 ```shell
 brew install awscli
 ```
-## Create User with any permissions(can access only to aws console)
+## Create User with no permissions(can access only to aws console)
 [Click here to access to aws console](https://us-east-1.console.aws.amazon.com/iamv2/home?region=us-east-1#/users)
 ![create aws user](images/aws-user.png)
 ## Execute script set up the readonly user to assume the two roles
 Create an access key and secret key for the test only. Copy the access key and secret key to configure aws cli.
 Run the following command
 ```shell
-aws configure --profile test-ro
+aws configure --profile john-doe
 ```
 ## Create the GitHub OIDC(for GitHub actions users)
 Use the [github-oidc.yaml](templates/github-oidc.yaml) to create GitHub Actions IAM role. This cloudformation template give a full admin access(Not recommended).

@@ -5,7 +5,7 @@ Resources:
   TestRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: TestRole
+      RoleName: NoAccessJohDoeRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -13,7 +13,7 @@ Resources:
             Principal:
               AWS:
                 - !Sub "arn:aws:iam::${AWS::AccountId}:root"
-                - !Sub "arn:aws:iam::${AWS::AccountId}:user/test-ro"
+                - !Sub "arn:aws:iam::${AWS::AccountId}:user/john-doe"
             Action: sts:AssumeRole
 #            Condition:
 #              StringLike:

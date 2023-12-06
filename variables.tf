@@ -20,7 +20,7 @@ variable "instance_type" {
 }
 
 variable "instance_count" {
-  default     = 3
+  default     = 2
   description = "EKS node count"
 }
 
@@ -46,12 +46,12 @@ variable "nailabx_domain" {
 }
 
 variable "readonly_role_name" {
-  default = "TestRole"
+  default = "NoAccessJohDoeRole"
   type = string
 }
 
 variable "k8s_admin_role_name" {
-  default = "AdminTestRole"
+  default = "AdminJohDoeRole"
   type = string
 }
 
